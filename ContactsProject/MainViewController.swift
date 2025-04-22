@@ -57,6 +57,8 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
     }
 
     @objc func addContact() {
-        print("추가 버튼 클릭됨")
+        let vc = ContactViewController()
+        navigationController?.pushViewController(vc, animated: true)
     }
+
 }
