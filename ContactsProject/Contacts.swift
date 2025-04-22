@@ -1,0 +1,14 @@
+//
+//  Contacts.swift
+//  ContactsProject
+//
+//  Created by Suzie Kim on 4/22/25.
+//
+
+import UIKit
+
+struct Contact {
+    var name: String
+    var phone: String
+    var image: UIImage?
+}
