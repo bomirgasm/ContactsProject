@@ -36,6 +36,7 @@ class ContactViewController: UIViewController {
         randomButton.setTitle("랜덤 이미지", for: .normal)
         randomButton.addTarget(self, action: #selector(fetchRandomImage), for: .touchUpInside)
 
+
         // 텍스트필드
         nameField.placeholder = "이름"
         phoneField.placeholder = "전화번호"
@@ -67,12 +68,50 @@ class ContactViewController: UIViewController {
         ])
     }
 
-    @objc func fetchRandomImage() {
-        print("랜덤 이미지 버튼 눌림")
-    }
+
 
     @objc func applyContact() {
         print("적용 버튼 눌림")
     }
+    
+    @objc func fetchRandomImage() {
+        let randomID = Int.random(in: 1...1000)
+        let urlString = "https://pokeapi.co/api/v2/pokemon/\(randomID)"
+
+        guard let url = URL(string: urlString) else {
+            print("❌ 잘못된 URL")
+            return
+        }
+
+        URLSession.shared.dataTask(with: url) { data, response, error in
+            if let error = error {
+                print("❌ 네트워크 에러: \(error.localizedDescription)")
+                return
+            }
+
+            guard let data = data,
+                  let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+                  let sprites = json["sprites"] as? [String: Any],
+                  let imageUrlString = sprites["front_default"] as? String,
+                  let imageUrl = URL(string: imageUrlString) else {
+                print("❌ JSON 파싱 실패")
+                return
+            }
+
+            // 이미지 로딩
+            URLSession.shared.dataTask(with: imageUrl) { imageData, _, _ in
+                guard let imageData = imageData,
+                      let image = UIImage(data: imageData) else {
+                    print("❌ 이미지 로딩 실패")
+                    return
+                }
+
+                DispatchQueue.main.async {
+                    self.profileImageView.image = image
+                }
+            }.resume()
+        }.resume()
+    }
+
 
 }
