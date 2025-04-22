@@ -20,6 +20,9 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "적용", style: .done, target: self, action: #selector(applyContact))
+        title = "연락처 추가" // 추후 편집모드면 이름으로 대체
+
         setupUI()
     }
 
@@ -59,6 +62,10 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
     @objc func addContact() {
         let vc = ContactViewController()
         navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    @objc func applyContact() {
+        print("적용 버튼 눌림")
     }
 
 }

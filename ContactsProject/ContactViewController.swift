@@ -21,8 +21,6 @@ class ContactViewController: UIViewController {
     }
 
     func setupUI() {
-        // 네비게이션 바
-        title = "연락처 추가"
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "적용", style: .done, target: self, action: #selector(applyContact))
 
         // 프로필 이미지뷰
@@ -76,15 +74,5 @@ class ContactViewController: UIViewController {
     @objc func applyContact() {
         print("적용 버튼 눌림")
     }
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
 
 }
