@@ -13,10 +13,7 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
     let tableView = UITableView()
 
     // 더미 데이터 (임시 연락처 배열)
-    var contacts: [Contact] = [
-        Contact(name: "지우", phone: "010-1234-5678", image: UIImage(named: "pikachu")),
-        Contact(name: "이슬", phone: "010-2345-6789", image: UIImage(named: "bulbasaur"))
-    ]
+    var contacts: [Contact] = []
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -24,6 +21,15 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
         title = "연락처 추가" // 추후 편집모드면 이름으로 대체
 
         setupUI()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        contacts = ContactStorage.shared.load()
+        contacts.sort {
+            $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending
+        }
+        tableView.reloadData()
     }
 
     func setupUI() {
@@ -48,14 +54,20 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
             return contacts.count
+        
         }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "ContactCell", for: indexPath) as? ContactCell else {
             return UITableViewCell()
         }
+
         let contact = contacts[indexPath.row]
-        cell.configure(with: contact)
+        cell.profileImageView.image = contact.imageData != nil ?
+            UIImage(data: contact.imageData!) :
+            UIImage(systemName: "nil")
+        cell.nameLabel.text = contact.name
+        cell.phoneLabel.text = contact.phone
         return cell
     }
 

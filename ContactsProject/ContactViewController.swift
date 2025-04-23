@@ -17,6 +17,10 @@ class ContactViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
+        
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "적용", style: .done, target: self, action: #selector(applyContact))
+        title = "연락처 추가" // 추후 편집모드면 이름으로 대체
+        
         setupUI()
     }
 
@@ -71,7 +75,19 @@ class ContactViewController: UIViewController {
 
 
     @objc func applyContact() {
-        print("적용 버튼 눌림")
+        guard let name = nameField.text, !name.isEmpty,
+              let phone = phoneField.text, !phone.isEmpty else {
+            print("이름 또는 전화번호 없음")
+            return
+        }
+        let imageData = profileImageView.image?.pngData()
+        let newContact = Contact(name: name, phone: phone, imageData: imageData)
+        
+        var contacts = ContactStorage.shared.load()
+        contacts.append(newContact)
+        ContactStorage.shared.save(contacts)
+        
+        navigationController?.popViewController(animated: true)
     }
     
     @objc func fetchRandomImage() {
@@ -79,13 +95,13 @@ class ContactViewController: UIViewController {
         let urlString = "https://pokeapi.co/api/v2/pokemon/\(randomID)"
 
         guard let url = URL(string: urlString) else {
-            print("❌ 잘못된 URL")
+            print("잘못된 URL")
             return
         }
 
         URLSession.shared.dataTask(with: url) { data, response, error in
             if let error = error {
-                print("❌ 네트워크 에러: \(error.localizedDescription)")
+                print("네트워크 에러: \(error.localizedDescription)")
                 return
             }
 
@@ -94,7 +110,7 @@ class ContactViewController: UIViewController {
                   let sprites = json["sprites"] as? [String: Any],
                   let imageUrlString = sprites["front_default"] as? String,
                   let imageUrl = URL(string: imageUrlString) else {
-                print("❌ JSON 파싱 실패")
+                print("JSON 파싱 실패")
                 return
             }
 
@@ -102,7 +118,7 @@ class ContactViewController: UIViewController {
             URLSession.shared.dataTask(with: imageUrl) { imageData, _, _ in
                 guard let imageData = imageData,
                       let image = UIImage(data: imageData) else {
-                    print("❌ 이미지 로딩 실패")
+                    print("이미지 로딩 실패")
                     return
                 }
 

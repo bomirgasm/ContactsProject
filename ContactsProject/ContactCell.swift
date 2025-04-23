@@ -52,9 +52,4 @@ class ContactCell: UITableViewCell {
         ])
     }
 
-    func configure(with contact: Contact) {
-        profileImageView.image = contact.image ?? UIImage(systemName: "nil")
-        nameLabel.text = contact.name
-        phoneLabel.text = contact.phone
-    }
 }

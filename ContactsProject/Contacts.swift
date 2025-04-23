@@ -7,8 +7,8 @@
 
 import UIKit
 
-struct Contact {
+struct Contact: Codable {
     var name: String
     var phone: String
-    var image: UIImage?
+    var imageData: Data?
 }
