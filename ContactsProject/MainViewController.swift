@@ -53,9 +53,8 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-            return contacts.count
-        
-        }
+        return contacts.count
+    }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "ContactCell", for: indexPath) as? ContactCell else {
@@ -70,9 +69,17 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
         cell.phoneLabel.text = contact.phone
         return cell
     }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let contact = contacts[indexPath.row]
+        let vc = ContactViewController()
+        vc.mode = .edit(index: indexPath.row, contact: contact)
+        navigationController?.pushViewController(vc, animated: true)
+    }
 
     @objc func addContact() {
         let vc = ContactViewController()
+        vc.mode = .add
         navigationController?.pushViewController(vc, animated: true)
     }
     

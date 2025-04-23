@@ -7,8 +7,14 @@
 
 import UIKit
 
+enum ContactMode {
+    case add
+    case edit(index: Int, contact: Contact)
+}
+
 class ContactViewController: UIViewController {
 
+    var mode: ContactMode = .add
     let profileImageView = UIImageView()
     let randomButton = UIButton(type: .system)
     let nameField = UITextField()
@@ -17,11 +23,19 @@ class ContactViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
-        
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "적용", style: .done, target: self, action: #selector(applyContact))
-        title = "연락처 추가" // 추후 편집모드면 이름으로 대체
-        
         setupUI()
+        
+        switch mode {
+        case .add:
+            title = "연락처 추가"
+        case .edit(_, let contact):
+            title = contact.name
+            nameField.text = contact.name
+            phoneField.text = contact.phone
+            if let data = contact.imageData {
+                profileImageView.image = UIImage(data: data)
+            }
+        }
     }
 
     func setupUI() {
@@ -84,9 +98,20 @@ class ContactViewController: UIViewController {
         let newContact = Contact(name: name, phone: phone, imageData: imageData)
         
         var contacts = ContactStorage.shared.load()
-        contacts.append(newContact)
-        ContactStorage.shared.save(contacts)
+
         
+        switch mode {
+        case .add:
+            contacts.append(newContact)
+        case .edit(_, let oldContact): // 해당 위치에 수정된 정보로 덮어쓰기
+            if let i = contacts.firstIndex(where: { $0.id == oldContact.id }) {
+                contacts[i] = newContact
+            } else {
+                contacts.append(newContact)
+            }
+        }
+        
+        ContactStorage.shared.save(contacts)
         navigationController?.popViewController(animated: true)
     }
     
